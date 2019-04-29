@@ -1,7 +1,7 @@
 class AlgoritmoDoBanqueiro:
     def __init__(self):
         self.recursosExistentes = []
-        self.recursosDisponiveis = []
+        self.recursosDisponiveis = None
         self.processos = []
         self.quantidadeTiposDeRecursos = 0
         self.quantidadeDeProcesos = 0
@@ -19,7 +19,9 @@ class AlgoritmoDoBanqueiro:
             nomeRecurso = input("\ndigite o nome do recurso [{}]: ".format(recurso+1))
             quantidadeRecurso = int(input("Digite a quantidade recurso: "))
             self.adicionarResursosExistentes(nomeRecurso, quantidadeRecurso)
+        self.recursosDisponiveis = list(self.recursosExistentes)
         self.criandoMatrizDeAlocacaoCorrente()
+        print(self.recursosExistentes)
 
     def criandoMatrizDeAlocacaoCorrente(self):
         qntProcessos = int(input("Digite a quantidade de processos: "))
@@ -27,6 +29,16 @@ class AlgoritmoDoBanqueiro:
         for processo in range(self.quantidadeDeProcesos):
             self.adicionarRecursosProcesso('p'+str(processo+1))
         print(self.processos)
+
+    def cotrollerProcessosRecursos(self):
+    	for processo in range(len(self.processo)):
+    		pass
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
