@@ -1,36 +1,43 @@
+from copy import deepcopy
+from Cores import Cor
+
+
 class AlgoritmoDoBanqueiro:
     def __init__(self):
-        self.recursosExistentes = []
         self.recursosDisponiveis = None
+        self.recursosExistentes = []
         self.processos = []
-        self.quantidadeTiposDeRecursos = 0
-        self.quantidadeDeProcesos = 0
+        self.cor = Cor()
 
     def adicionarResursosExistentes(self, nomeRecurso, qntRecurso):
         self.recursosExistentes.append({'{}'.format(nomeRecurso): qntRecurso})
 
     def adicionarRecursosProcesso(self, nomeProcesso):
-        self.processos.append({'{}'.format(nomeProcesso): list(self.recursosExistentes)})
+        self.processos.append({'{}'.format(nomeProcesso): deepcopy(self.recursosExistentes)})
+
+    def imprimirMatriz(self, lista, nome, cor):
+        print("\n-- {} --".format(self.cor.colorir(nome, 'branco')))
+        for item in lista:
+            for key in item:
+                print("{}: {}".format(self.cor.colorir(key, cor), item[key]))
 
     def orquestrador(self):
         recursoQuantidade = int(input("Digite a quantidade de tipos de recursos: "))
-        self.quantidadeTiposDeRecursos = recursoQuantidade
-        for recurso in range(self.quantidadeTiposDeRecursos):
+        for recurso in range(recursoQuantidade):
             nomeRecurso = input("\ndigite o nome do recurso [{}]: ".format(recurso+1))
             quantidadeRecurso = int(input("Digite a quantidade recurso: "))
             self.adicionarResursosExistentes(nomeRecurso, quantidadeRecurso)
 
-        self.recursosDisponiveis = list(self.recursosExistentes)
+        self.recursosDisponiveis = deepcopy(self.recursosExistentes)
+        self.imprimirMatriz(self.recursosExistentes, "RECURSOS EXISTENTES", 'azul')
+        self.imprimirMatriz(self.recursosDisponiveis, "RECURSOS DISPONIVEIS", 'azul')
         self.criandoMatrizDeAlocacaoCorrente()
         self.controllerProcessosRecursos()
-        #print(self.recursosExistentes)
 
     def criandoMatrizDeAlocacaoCorrente(self):
         qntProcessos = int(input("\nDigite a quantidade de processos: "))
-        self.quantidadeDeProcesos = qntProcessos
-        for processo in range(self.quantidadeDeProcesos):
+        for processo in range(qntProcessos):
             self.adicionarRecursosProcesso('p'+str(processo+1))
-        #print(self.processos)
 
     def controllerProcessosRecursos(self):
         for processo in range(len(self.processos)):
@@ -40,30 +47,26 @@ class AlgoritmoDoBanqueiro:
                     processoImprimir = self.processos[processo].copy().popitem()[0]
                     recursoImprimir = self.recursosExistentes[recurso].copy().popitem()[0]
 
-                    recursoSolicitado = int(input("Digite a quantidade de recurso [{}] do [{}]: ".format(recursoImprimir, processoImprimir)))
-                    print("\nprocesso: {}\nrecurso: {}".format(self.recursosExistentes[recurso].copy().popitem()[0], self.processos[processo].copy().popitem()[1][recurso].copy().popitem()[0]))
+                    self.imprimirMatriz(self.recursosDisponiveis, "RECURSOS DISPONIVEIS", 'azul')
+                    recursoSolicitado = int(input("\nDigite a quantidade de recurso [{}] do [{}]: ".format(self.cor.colorir(recursoImprimir, 'azul'), self.cor.colorir(processoImprimir, 'verde'))))
+
                     recursoExistente = self.recursosExistentes[recurso].copy().popitem()[0]
                     processoRecurso = self.processos[processo].copy().popitem()[1][recurso].copy().popitem()[0]
                     if recursoExistente == processoRecurso:
-                        print("recursos iguais")
-                        print(self.recursosDisponiveis[recurso].copy().popitem()[1])
                         if recursoSolicitado <= self.recursosDisponiveis[recurso].copy().popitem()[1]:
                             self.processos[processo][processoImprimir][recurso][recursoImprimir] = recursoSolicitado
+                            self.recursosDisponiveis[recurso][recursoImprimir] = self.recursosDisponiveis[recurso][recursoImprimir] - recursoSolicitado
                             verifica = True
-                            print("RECURSO DISPONIVEL")
-                            print(self.processos)
 
                         elif self.recursosDisponiveis[recurso].copy().popitem()[1] == 0:
                             self.processos[processo][processoImprimir][recurso][recursoImprimir] = 0
                             verifica = True
 
                         else:
-                            print("Quantidade de recurso disponivel em [{}] de [{}] => {}".format(recursoImprimir, processoImprimir, self.recursosDisponiveis[recurso].copy().popitem()[1]))
-    '''
-    Falta decrementar em self.recursosDisponiveis o recursoSolicitado.
+                            print("\nQuantidade de recurso disponivel em [{}] do [{}] => {}".format(self.cor.colorir(recursoImprimir, 'azul'), self.cor.colorir(processoImprimir, 'verde'), self.recursosDisponiveis[recurso].copy().popitem()[1]))
 
-    
-    '''
+        self.imprimirMatriz(self.processos, "PROCESSOS RECURSOS", 'verde')
+        self.imprimirMatriz(self.recursosDisponiveis, "RECURSOS DISPONIVEIS", 'azul')
 
 
 if __name__ == '__main__':
