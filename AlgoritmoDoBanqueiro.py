@@ -52,10 +52,13 @@ class AlgoritmoDoBanqueiro:
                             verifica = True
                             print("RECURSO DISPONIVEL")
                             print(self.processos)
+
+                        elif self.recursosDisponiveis[recurso].copy().popitem()[1] == 0:
+                            self.processos[processo][processoImprimir][recurso][recursoImprimir] = 0
+                            verifica = True
+
                         else:
-                            if self.recursosDisponiveis[recurso].copy().popitem()[1] == 0:
-                                self.processos[processo][processoImprimir][recurso][recursoImprimir] = 0
-                                verifica = True
+                            print("Quantidade de recurso disponivel em [{}] de [{}] => {}".format(recursoImprimir, processoImprimir, self.recursosDisponiveis[recurso].copy().popitem()[1]))
     '''
     Falta decrementar em self.recursosDisponiveis o recursoSolicitado.
 
