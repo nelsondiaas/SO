@@ -26,6 +26,15 @@ class AlgoritmoDoBanqueiro:
             for key in item:
                 print("{}: {}".format(self.cor.colorir(key, cor), item[key]))
 
+    def resultadoFinal(self, lista):
+        print("\n-- {} --".format(self.cor.colorir('RESULTADO FINAL MATRIZ DE REQUISIÇAO', 'branco')))
+        for item in range(len(lista)):
+            keyProcesso = lista[item][0].copy().popitem()[0]
+            print("{}: {} {}".format(self.cor.colorir(keyProcesso, 'verde'), lista[item][0][keyProcesso], self.cor.colorirBooleano(lista[item][1]['executado'])))
+        self.imprimirMatriz(self.processosAlocacaoCorrente, "RESULTADO FINAL MATRIZ DE ALOCAÇAO CORRENTE", 'verde')
+        self.imprimirMatriz(self.recursosExistentes, "RESULTADO FINAL RECURSOS EXISTENTES", 'azul')
+        self.imprimirMatriz(self.recursosDisponiveis, 'RESULTADO FINAL RECURSOS DISPONIVEIS', 'azul')
+
     def orquestrador(self):
         recursoQuantidade = int(input("Digite a quantidade de tipos de recursos: "))
         for recurso in range(recursoQuantidade):
@@ -40,12 +49,12 @@ class AlgoritmoDoBanqueiro:
         self.controllerProcessosRecursos()
         self.controllerProcessosDeRequisicao()
         self.controllerDeadlock()
+        self.resultadoFinal(self.processoDeRequisicoes)
 
     def criandoMatrizDeAlocacaoCorrente(self):
         qntProcessos = int(input("\nDigite a quantidade de processos: "))
         for processo in range(qntProcessos):
             self.adicionarRecursosProcessoAlocacaoCorrente('p' + str(processo + 1))
-
 
     def controllerProcessosDeRequisicao(self):
         for processo in range(len(self.processoDeRequisicoes)):
@@ -61,26 +70,34 @@ class AlgoritmoDoBanqueiro:
                 if keyProcessoAlocacaoCorrente == keyProcessoDeRequisicao and keyRecursoAlocacaoCorrente == keyRecursoDeRequisicao:
                     self.processoDeRequisicoes[processo][0][keyProcessoDeRequisicao][recurso][keyRecursoDeRequisicao] = recursoSolicitado
 
+    def liberarRecursos(self, keyProcesso):
+        for processo in range(len(self.processosAlocacaoCorrente)):
+            if self.processosAlocacaoCorrente[processo].copy().popitem()[0] == keyProcesso:
+                for recurso in range(len(self.processosAlocacaoCorrente[processo][keyProcesso])):
+                    keyRecurso = self.processosAlocacaoCorrente[processo][keyProcesso][recurso].copy().popitem()[0]
+                    self.recursosDisponiveis[recurso][keyRecurso] += self.processosAlocacaoCorrente[processo][keyProcesso][recurso][keyRecurso]
+                    self.processosAlocacaoCorrente[processo][keyProcesso][recurso][keyRecurso] = 0
 
     def controllerDeadlock(self):
         for processo in range(len(self.processoDeRequisicoes)):
-            controller = 0
-            for recurso in range(len(self.recursosDisponiveis)):
-                keyProcessoDeRequisicao = self.processoDeRequisicoes[processo][0].copy().popitem()[0]
-                keyRecursoDeRequisicao = self.processoDeRequisicoes[processo][0][keyProcessoDeRequisicao][recurso].copy().popitem()[0]
+            boleanRecursoRequisicao = self.processoDeRequisicoes[processo][1]['executado']
+            if boleanRecursoRequisicao != True:
+                controller = 0
+                for recurso in range(len(self.recursosDisponiveis)):
+                    keyProcessoDeRequisicao = self.processoDeRequisicoes[processo][0].copy().popitem()[0]
+                    keyRecursoDeRequisicao = self.processoDeRequisicoes[processo][0][keyProcessoDeRequisicao][recurso].copy().popitem()[0]
 
-                valorRecursoRequisicao = self.processoDeRequisicoes[processo][0][keyProcessoDeRequisicao][recurso][keyRecursoDeRequisicao]
-                boleanRecursoRequisicao = self.processoDeRequisicoes[processo][1]['executado']
+                    valorRecursoRequisicao = self.processoDeRequisicoes[processo][0][keyProcessoDeRequisicao][recurso][keyRecursoDeRequisicao]
 
-                if valorRecursoRequisicao > self.recursosDisponiveis[recurso][keyRecursoDeRequisicao]:
-                    controller += 0
-                else:
-                    controller += 1
+                    if valorRecursoRequisicao > self.recursosDisponiveis[recurso][keyRecursoDeRequisicao]:
+                        controller += 0
+                    else:
+                        controller += 1
 
-            if controller == len(self.recursosDisponiveis):
-                self.processoDeRequisicoes[processo][1]['executado'] = True
-
-        print("\n{}".format(self.processoDeRequisicoes))
+                if controller == len(self.recursosDisponiveis):
+                    self.processoDeRequisicoes[processo][1]['executado'] = True
+                    self.liberarRecursos(keyProcessoDeRequisicao)
+                    self.controllerDeadlock() #RECURSAO MAGICA
 
     def controllerProcessosRecursos(self):
         for processo in range(len(self.processosAlocacaoCorrente)):
@@ -111,7 +128,6 @@ class AlgoritmoDoBanqueiro:
 
         self.imprimirMatriz(self.processosAlocacaoCorrente, "PROCESSOS RECURSOS", 'verde')
         self.imprimirMatriz(self.recursosDisponiveis, "RECURSOS DISPONIVEIS", 'azul')
-
 
 
 if __name__ == '__main__':
