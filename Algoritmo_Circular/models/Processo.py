@@ -7,13 +7,11 @@ class Processo:
         self.controllerTempoProcesso = tempoProcesso
         self.tempoDeEspera = 0
         self.tempoDeExecucao = 0
-        self.status = False
 
     def __str__(self):
         return self.nomeProcesso
 
     def executando(self):
-        self.status = True
         if self.tempoProcesso > self.quantum:
             self.tempoProcesso -= self.quantum
             self.tempoDeExecucao += self.quantum
@@ -25,17 +23,27 @@ class Processo:
             return aux
 
     def ultimoExecutando(self, tempoDeExecucaoFinal):
-        self.status = True
         self.tempoProcesso -= tempoDeExecucaoFinal
         self.tempoDeExecucao += tempoDeExecucaoFinal
 
-    def execucaoFinalizada(self):
-        self.status = False
-
     def incrementarTempoDeEspera(self, fila, tempoDeExecucao):
         for processo in fila:
-            if processo != self and processo.status != True:
-                processo.tempoDeEspera += tempoDeExecucao
+            processo.tempoDeEspera += (tempoDeExecucao + self.tempoTrocaContexto)
+        if len(fila) != 0:
+            self.tempoDeEspera += self.tempoTrocaContexto
 
+
+'''
+No metodo 'incrementarTempoDeEspera', recebemos a fila (observe que a fila atualmente esta sem o Processo
+que esta executando, pois aplicamos um 'pop' nele), em cada processo da fila, temos que incrementar ao
+'TempoDeEspera' o 'TempoDeExecucao' (recebido como parametro) e o 'tempoTrocaContexto', ja que os processos
+que nao estao sendo executados devem ser incrementados com o tempo do que esta sendo executado juntamente
+com o tempo de troca de contexto que e aplicado antes dele finalizar. Ao final, caso o processo que esta
+sendo executado seja o ultimo (por isso e verificado se a fila esta vazia), nao e necessario adicionar ao
+tempoDeEspera dele o tempo de troca de contexto, ja que ele nao sera trocado por outro processo, ja se ele
+nao for o ultimo, e necessario adicionar ao tempoDeEspera dele o tempo de troca de contexto, ja que ele
+tambem entra em espera nesse momento.
+
+'''
         
 

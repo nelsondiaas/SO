@@ -1,5 +1,5 @@
-from datastructure.Fila import Fila
 from models.Processo import Processo
+from datastructure.Fila import Fila
 from utils.ui import *
 
 
@@ -20,7 +20,6 @@ class SistemaOperacional:
 
                 if self.fila.tamanho() == 0: #Se for o ultimo processo na fila
                     atualProcesso.ultimoExecutando(tempoDeExecucaoFinal)
-                    atualProcesso.execucaoFinalizada()
                     printProcesso(atualProcesso.nomeProcesso, atualProcesso.tempoProcesso, atualProcesso.controllerTempoProcesso, atualProcesso.tempoDeEspera, tempoDeExecucaoFinal)
                     self.finalizados.append(atualProcesso)
                     break
@@ -30,10 +29,8 @@ class SistemaOperacional:
                     printProcesso(atualProcesso.nomeProcesso, atualProcesso.tempoProcesso, atualProcesso.controllerTempoProcesso, atualProcesso.tempoDeEspera, tempoDeExecucao)
 
                     if atualProcesso.tempoDeExecucao == atualProcesso.controllerTempoProcesso:
-                        atualProcesso.execucaoFinalizada()
                         self.finalizados.append(atualProcesso)
                     else:
-                        atualProcesso.execucaoFinalizada()
                         self.fila.push(atualProcesso)
             self.cpu()
 
