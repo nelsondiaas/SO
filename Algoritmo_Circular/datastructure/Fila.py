@@ -19,20 +19,6 @@ class Fila:
         self.fila.remove(self.inicio())
         return aux
 
-    def imprimirFila(self):
+    def fila(self):
         return self.fila
 
-
-if __name__ == '__main__':
-    fila = Fila()
-    fila.push(1)
-    fila.push(2)
-    fila.push(3)
-    fila.push(4)
-    fila.push(5)
-
-    print(fila.imprimirFila())
-
-    fila.push(fila.pop())
-
-    print(fila.imprimirFila())

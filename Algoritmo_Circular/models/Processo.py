@@ -4,6 +4,7 @@ class Processo:
         self.tempoProcesso = tempoProcesso
         self.quantum = quantum
         self.tempoTrocaContexto = tempoTrocaContexto
+        self.controllerTempoProcesso = tempoProcesso
         self.tempoDeEspera = 0
         self.tempoDeExecucao = 0
         self.status = False
@@ -22,3 +23,19 @@ class Processo:
             self.tempoDeExecucao += aux
             self.tempoProcesso = 0
             return aux
+
+    def ultimoExecutando(self, tempoDeExecucaoFinal):
+        self.status = True
+        self.tempoProcesso -= tempoDeExecucaoFinal
+        self.tempoDeExecucao += tempoDeExecucaoFinal
+
+    def execucaoFinalizada(self):
+        self.status = False
+
+    def incrementarTempoDeEspera(self, fila, tempoDeExecucao):
+        for processo in fila:
+            if processo != self and processo.status != True:
+                processo.tempoDeEspera += tempoDeExecucao
+
+        
+
