@@ -31,6 +31,11 @@ class Processo:
         self.tempoProcesso -= tempoDeExecucaoFinal
         self.tempoDeExecucao += tempoDeExecucaoFinal
 
+    def quantumTrocaContextoZero(self, fila):
+        self.ultimoTempoDeExecucao = self.tempoProcesso
+        for processo in fila:
+            processo.tempoDeEspera += (self.tempoProcesso)
+
     def incrementarTempoDeEspera(self, fila, tempoDeExecucao):
         for processo in fila:
             processo.tempoDeEspera += (tempoDeExecucao + self.tempoTrocaContexto)

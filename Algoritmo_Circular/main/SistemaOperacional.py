@@ -24,7 +24,12 @@ class SistemaOperacional:
                 atualProcesso = self.fila.pop()
                 tempoDeExecucaoFinal = atualProcesso.tempoProcesso
 
-                if self.fila.tamanho() == 0: #Se for o ultimo processo na fila
+                if atualProcesso.quantum == 0 and atualProcesso.tempoTrocaContexto == 0:
+                    atualProcesso.quantumTrocaContextoZero(self.fila.fila)
+                    printProcesso(atualProcesso.nomeProcesso, atualProcesso.tempoProcesso, atualProcesso.tempoProcesso, 0, atualProcesso.controllerTempoProcesso,atualProcesso.tempoDeEspera, atualProcesso.tempoProcesso)
+                    self.finalizados.append(atualProcesso)
+
+                elif self.fila.tamanho() == 0: #Se for o ultimo processo na fila
                     atualProcesso.swapUltimoTempoExecucao(tempoDeExecucaoFinal)
                     atualProcesso.ultimoExecutando(tempoDeExecucaoFinal)
                     printProcesso(atualProcesso.nomeProcesso, self.tempoDeExecucao, self.valorAntigoTempoProcesso,atualProcesso.tempoProcesso, atualProcesso.controllerTempoProcesso,atualProcesso.tempoDeEspera, tempoDeExecucaoFinal)
