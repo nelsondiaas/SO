@@ -19,6 +19,4 @@ class Fila:
         self.fila.remove(self.inicio())
         return aux
 
-    def fila(self):
-        return self.fila
 

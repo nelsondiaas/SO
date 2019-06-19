@@ -8,27 +8,36 @@ class SistemaOperacional:
         self.fila = Fila()
         self.finalizados = []
 
-    def verificarFinalizados(self):
-        for i in self.finalizados:
-            print("\nNome: {}\nTempo espera: {}\nTempo execução: {}".format(i.nomeProcesso, i.tempoDeEspera, i.tempoDeExecucao))
+    def tempoMedioEsperaTurnaround(self):
+        dicionario = {"tempoMedioEspera": 0, "tempoDeTurnaround": 0}
+        for processo in self.finalizados:
+            dicionario["tempoMedioEspera"] += processo.tempoDeEspera
+            dicionario["tempoDeTurnaround"] += (processo.tempoDeEspera + processo.controllerTempoProcesso)
+        dicionario["tempoMedioEspera"] = (dicionario["tempoMedioEspera"] / self.qntProcesso)
+        dicionario["tempoDeTurnaround"] = (dicionario["tempoDeTurnaround"] / self.qntProcesso)
+        return dicionario
 
     def cpu(self):
         if len(self.finalizados) != self.qntProcesso:
             for processo in range(self.qntProcesso):
+                printFila(self.fila.fila)
                 atualProcesso = self.fila.pop()
                 tempoDeExecucaoFinal = atualProcesso.tempoProcesso
 
                 if self.fila.tamanho() == 0: #Se for o ultimo processo na fila
+                    atualProcesso.swapUltimoTempoExecucao(tempoDeExecucaoFinal)
                     atualProcesso.ultimoExecutando(tempoDeExecucaoFinal)
-                    printProcesso(atualProcesso.nomeProcesso, atualProcesso.tempoProcesso, atualProcesso.controllerTempoProcesso, atualProcesso.tempoDeEspera, tempoDeExecucaoFinal)
+                    printProcesso(atualProcesso.nomeProcesso, self.tempoDeExecucao, self.valorAntigoTempoProcesso,atualProcesso.tempoProcesso, atualProcesso.controllerTempoProcesso,atualProcesso.tempoDeEspera, tempoDeExecucaoFinal)
                     self.finalizados.append(atualProcesso)
                     break
                 else:
-                    tempoDeExecucao = atualProcesso.executando()
-                    atualProcesso.incrementarTempoDeEspera(self.fila.fila, tempoDeExecucao)
-                    printProcesso(atualProcesso.nomeProcesso, atualProcesso.tempoProcesso, atualProcesso.controllerTempoProcesso, atualProcesso.tempoDeEspera, tempoDeExecucao)
+                    self.valorAntigoTempoProcesso = atualProcesso.tempoProcesso
+                    self.tempoDeExecucao = atualProcesso.executando()
+                    atualProcesso.incrementarTempoDeEspera(self.fila.fila, self.tempoDeExecucao)
+                    printProcesso(atualProcesso.nomeProcesso, self.tempoDeExecucao, self.valorAntigoTempoProcesso, atualProcesso.tempoProcesso, atualProcesso.controllerTempoProcesso,atualProcesso.tempoDeEspera, self.tempoDeExecucao)
 
                     if atualProcesso.tempoDeExecucao == atualProcesso.controllerTempoProcesso:
+                        atualProcesso.swapUltimoTempoExecucao(tempoDeExecucaoFinal)
                         self.finalizados.append(atualProcesso)
                     else:
                         self.fila.push(atualProcesso)
@@ -44,7 +53,8 @@ class SistemaOperacional:
             tempoProcesso = int(input("Digite a quantidade de tempo do processo: "))
             self.fila.push(Processo(nomeProcesso, tempoProcesso, quantum, tempoTrocaContexto))
         self.cpu()
-        self.verificarFinalizados()
+        printFinalizados(self.finalizados)
+        printTempoMediaEsperaTurnaround(self.tempoMedioEsperaTurnaround())
         
 
 if __name__ == '__main__':

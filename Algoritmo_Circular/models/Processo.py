@@ -1,3 +1,4 @@
+
 class Processo:
     def __init__(self, nomeProcesso, tempoProcesso, quantum, tempoTrocaContexto):
         self.nomeProcesso = nomeProcesso
@@ -7,9 +8,13 @@ class Processo:
         self.controllerTempoProcesso = tempoProcesso
         self.tempoDeEspera = 0
         self.tempoDeExecucao = 0
+        self.ultimoTempoDeExecucao = 0
 
     def __str__(self):
-        return self.nomeProcesso
+        return self.nomeProcesso.upper()
+
+    def swapUltimoTempoExecucao(self, ultimoTempo):
+        self.ultimoTempoDeExecucao = ultimoTempo
 
     def executando(self):
         if self.tempoProcesso > self.quantum:
