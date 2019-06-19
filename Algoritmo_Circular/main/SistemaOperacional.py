@@ -33,8 +33,8 @@ class SistemaOperacional:
                 else:
                     self.valorAntigoTempoProcesso = atualProcesso.tempoProcesso
                     self.tempoDeExecucao = atualProcesso.executando()
+                    printProcesso(atualProcesso.nomeProcesso, self.tempoDeExecucao, self.valorAntigoTempoProcesso,atualProcesso.tempoProcesso, atualProcesso.controllerTempoProcesso,atualProcesso.tempoDeEspera, self.tempoDeExecucao)
                     atualProcesso.incrementarTempoDeEspera(self.fila.fila, self.tempoDeExecucao)
-                    printProcesso(atualProcesso.nomeProcesso, self.tempoDeExecucao, self.valorAntigoTempoProcesso, atualProcesso.tempoProcesso, atualProcesso.controllerTempoProcesso,atualProcesso.tempoDeEspera, self.tempoDeExecucao)
 
                     if atualProcesso.tempoDeExecucao == atualProcesso.controllerTempoProcesso:
                         atualProcesso.swapUltimoTempoExecucao(tempoDeExecucaoFinal)

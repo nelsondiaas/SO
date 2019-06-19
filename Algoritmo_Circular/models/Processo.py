@@ -34,7 +34,7 @@ class Processo:
     def incrementarTempoDeEspera(self, fila, tempoDeExecucao):
         for processo in fila:
             processo.tempoDeEspera += (tempoDeExecucao + self.tempoTrocaContexto)
-        if len(fila) != 0:
+        if self.tempoProcesso != 0:
             self.tempoDeEspera += self.tempoTrocaContexto
 
 
