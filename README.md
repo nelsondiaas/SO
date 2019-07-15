@@ -1,1 +1,1 @@
-# algoritmo-do-banqueiro
+# algoritmo-do-banqueiro & circular
